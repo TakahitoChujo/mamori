@@ -16,19 +16,15 @@ jest.mock('expo-sms', () => ({
   sendSMSAsync: jest.fn().mockResolvedValue({ result: 'sent' }),
 }));
 
-jest.mock('expo-av', () => ({
-  Audio: {
-    setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
-    Sound: {
-      createAsync: jest.fn().mockResolvedValue({
-        sound: {
-          playAsync: jest.fn(),
-          stopAsync: jest.fn(),
-          unloadAsync: jest.fn(),
-        },
-      }),
-    },
-  },
+jest.mock('expo-audio', () => ({
+  createAudioPlayer: jest.fn().mockReturnValue({
+    play: jest.fn(),
+    pause: jest.fn(),
+    remove: jest.fn(),
+    loop: false,
+    volume: 1.0,
+  }),
+  setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock('expo-haptics', () => ({

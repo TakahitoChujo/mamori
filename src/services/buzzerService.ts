@@ -1,29 +1,24 @@
-import { Audio } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 
-let buzzerSound: Audio.Sound | null = null;
+const buzzerSource = require('../../assets/buzzer.mp3');
+
+let buzzerPlayer: AudioPlayer | null = null;
 
 export async function startBuzzer(): Promise<void> {
   try {
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: true,
-      shouldDuckAndroid: false,
+    await setAudioModeAsync({
+      playsInSilentMode: true,
     });
 
-    if (buzzerSound) {
-      await buzzerSound.unloadAsync();
+    if (buzzerPlayer) {
+      buzzerPlayer.remove();
+      buzzerPlayer = null;
     }
 
-    const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/buzzer.mp3'),
-      {
-        shouldPlay: true,
-        isLooping: true,
-        volume: 1.0,
-      }
-    );
-    buzzerSound = sound;
+    buzzerPlayer = createAudioPlayer(buzzerSource);
+    buzzerPlayer.loop = true;
+    buzzerPlayer.volume = 1.0;
+    buzzerPlayer.play();
   } catch (error) {
     console.error('Buzzer start failed:', error);
   }
@@ -31,10 +26,10 @@ export async function startBuzzer(): Promise<void> {
 
 export async function stopBuzzer(): Promise<void> {
   try {
-    if (buzzerSound) {
-      await buzzerSound.stopAsync();
-      await buzzerSound.unloadAsync();
-      buzzerSound = null;
+    if (buzzerPlayer) {
+      buzzerPlayer.pause();
+      buzzerPlayer.remove();
+      buzzerPlayer = null;
     }
   } catch (error) {
     console.error('Buzzer stop failed:', error);

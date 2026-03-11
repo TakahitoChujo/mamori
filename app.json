@@ -14,11 +14,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mamori.app",
+      "buildNumber": "1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "SOSメッセージに現在地を添付するために位置情報を使用します。",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "帰宅タイマー機能で安全を見守るために位置情報を使用します。",
         "NSCameraUsageDescription": "証拠保全のためにカメラを使用します。",
-        "NSMicrophoneUsageDescription": "緊急時の音声録音に使用します。"
+        "NSMicrophoneUsageDescription": "緊急時の音声録音に使用します。",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -32,6 +34,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "098e9142-865e-4a80-a311-67322a38c0db"
+      }
+    },
+    "plugins": [
+      "expo-audio"
+    ]
   }
 }

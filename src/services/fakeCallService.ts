@@ -1,8 +1,8 @@
-import { Audio } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import { FakeCallConfig } from '../types';
 
-let ringtoneSound: Audio.Sound | null = null;
+let ringtonePlayer: AudioPlayer | null = null;
 let scheduledTimeout: ReturnType<typeof setTimeout> | null = null;
 let vibrationInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -19,22 +19,14 @@ export function scheduleFakeCall(
 
 export async function startRinging(): Promise<void> {
   try {
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: true,
-      shouldDuckAndroid: false,
+    await setAudioModeAsync({
+      playsInSilentMode: true,
     });
 
-    const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/ringtone.mp3'),
-      {
-        shouldPlay: true,
-        isLooping: true,
-        volume: 1.0,
-      }
-    );
-    ringtoneSound = sound;
+    ringtonePlayer = createAudioPlayer(require('../../assets/ringtone.mp3'));
+    ringtonePlayer.loop = true;
+    ringtonePlayer.volume = 1.0;
+    ringtonePlayer.play();
 
     vibrationInterval = setInterval(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -46,10 +38,10 @@ export async function startRinging(): Promise<void> {
 
 export async function stopRinging(): Promise<void> {
   try {
-    if (ringtoneSound) {
-      await ringtoneSound.stopAsync();
-      await ringtoneSound.unloadAsync();
-      ringtoneSound = null;
+    if (ringtonePlayer) {
+      ringtonePlayer.pause();
+      ringtonePlayer.remove();
+      ringtonePlayer = null;
     }
     if (vibrationInterval) {
       clearInterval(vibrationInterval);
