@@ -8,6 +8,7 @@ export async function startBuzzer(): Promise<void> {
   try {
     await setAudioModeAsync({
       playsInSilentMode: true,
+      interruptionMode: 'doNotMix',
     });
 
     if (buzzerPlayer) {
